@@ -1,9 +1,29 @@
 const fs = require('fs');
 const path = require('path');
 
+/**
+ * Validates the file path to prevent path traversal attacks.
+ */
+function validateFilePath(filePath, allowedBaseDir) {
+  const normalizedPath = path.normalize(filePath);
+  const resolvedPath = path.resolve(normalizedPath);
+
+  if (!resolvedPath.startsWith(allowedBaseDir)) {
+    throw new Error(`Path traversal detected: ${resolvedPath}`);
+  }
+
+  return resolvedPath;
+}
+
+/**
+ * Reads and parses a JSON file securely.
+ */
 function getJsonContent(inputFile) {
   try {
-    const data = fs.readFileSync(inputFile, 'utf8');
+    const allowedDir = path.resolve(process.cwd()); // Allow only within project directory
+    const safeInputFile = validateFilePath(inputFile, allowedDir);
+
+    const data = fs.readFileSync(safeInputFile, 'utf8');
     let lines = data.split('\n');
     let bracketCount = 0;
     let result = [];
@@ -24,10 +44,19 @@ function getJsonContent(inputFile) {
   }
 }
 
+/**
+ * Extracts the version from JSON and writes it to an output file securely.
+ */
 function extractVersion(inputFile = 'version.json', outputFile = 'version.txt') {
   try {
+    const allowedDir = path.resolve(process.cwd());
+
+    // Validate input and output paths
+    const safeInputFile = validateFilePath(inputFile, allowedDir);
+    const safeOutputFile = validateFilePath(outputFile, allowedDir);
+
     // Read and parse the JSON file
-    const data = getJsonContent(inputFile, 'utf8');
+    const data = getJsonContent(safeInputFile);
 
     // Find the package and extract version
     const package = data.find((item) => item.name === "nab/nui-react-native");
@@ -40,11 +69,10 @@ function extractVersion(inputFile = 'version.json', outputFile = 'version.txt') 
       throw new Error('Version not found for nab/nui-react-native');
     }
 
-    // Write version to output file
-    fs.writeFileSync(outputFile, version);
-    console.log(`Version ${version} written to ${outputFile}`);
+    // Write version to output file securely
+    fs.writeFileSync(safeOutputFile, version);
+    console.log(`Version ${version} written to ${safeOutputFile}`);
 
-    // Return version in case needed programmatically
     return version;
   } catch (error) {
     console.error('Error:', error.message);
@@ -52,19 +80,28 @@ function extractVersion(inputFile = 'version.json', outputFile = 'version.txt') 
   }
 }
 
-// CLI handling
+/**
+ * CLI handling with secure file validation.
+ */
 function main() {
   const args = process.argv.slice(2);
   const inputFile = args[0] || 'version.json';
   const outputFile = args[1] || 'version.txt';
 
   try {
-    // Validate input file exists
-    if (!fs.existsSync(inputFile)) {
-      throw new Error(`Input file ${inputFile} not found`);
+    const allowedDir = path.resolve(process.cwd());
+
+    // Validate paths
+    const safeInputFile = validateFilePath(inputFile, allowedDir);
+    const safeOutputFile = validateFilePath(outputFile, allowedDir);
+
+    // Ensure input file exists
+    if (!fs.existsSync(safeInputFile)) {
+      throw new Error(`Input file ${safeInputFile} not found`);
     }
 
-    const version = extractVersion(inputFile, outputFile);
+    // Extract and write version
+    const version = extractVersion(safeInputFile, safeOutputFile);
     process.exit(0);
   } catch (error) {
     console.error('Error:', error.message);
@@ -72,7 +109,9 @@ function main() {
   }
 }
 
-// Allow both CLI and module usage
+/**
+ * Allow both CLI and module usage.
+ */
 if (require.main === module) {
   main();
 } else {
