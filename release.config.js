@@ -1,44 +1,38 @@
-module.exports = {
-  repositoryUrl: 'https://github.aus.thenational.com/NAB-X/xnf-module.git',
+const commitAnalyzer = await import('@semantic-release/commit-analyzer');
+const releaseNotesGenerator = await import('@semantic-release/release-notes-generator');
+const execPlugin = await import('@semantic-release/exec');
+const changelogPlugin = await import('@semantic-release/changelog');
+const npmPlugin = await import('@semantic-release/npm');
+const gitPlugin = await import('@semantic-release/git');
+const githubPlugin = await import('@semantic-release/github');
+
+export default {
+  repositoryUrl: 'https://github.aus.thenational.com/NAB-X/nui-themes.git',
   branches: ['master'],
+  extends: 'semantic-release-monorepo',
   plugins: [
-    '@semantic-release/commit-analyzer',
+    commitAnalyzer.default,
     {
-      preset: 'angular',
+      preset: 'angular'
     },
-    '@semantic-release/release-notes-generator',
+    releaseNotesGenerator.default,
     {
-      '@semantic-release/exec': {
-        successCmd: 'echo ${nextRelease.version} > .next-version.txt',
-      },
-    },
-    {
-      '@semantic-release/changelog': {
-        changelogFile: 'CHANGELOG.md',
-      },
+      [execPlugin.default]: {
+        successCmd: 'echo ${nextRelease.version} > .next-version.txt'
+      }
     },
     {
-      '@semantic-release/npm': {
-        npmPublish: false, // Set to false if you are using a private registry or only want version updates
-        pkgRoot: '.', 
-        tarballDir: '.',
-        verifyConditions: ['@semantic-release/npm'],
-      },
+      [changelogPlugin.default]: {
+        changelogFile: 'CHANGELOG.md'
+      }
     },
+    npmPlugin.default,
     {
-      '@semantic-release/git': {
+      [gitPlugin.default]: {
         message: 'chore(release): v${nextRelease.version}',
-        assets: ['CHANGELOG.md', 'package.json'],
-      },
+        assets: ['CHANGELOG.md', 'package.json']
+      }
     },
-    '@semantic-release/github',
-  ],
-  prepare: [
-    {
-      path: '@semantic-release/npm',
-      env: {
-        YARN_IGNORE_PEER_DEPENDENCIES: 'true',
-      },
-    },
-  ],
+    githubPlugin.default
+  ]
 };
