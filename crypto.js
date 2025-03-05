@@ -17,4 +17,17 @@ if (!global.crypto || !global.crypto.getRandomValues) {
     ...global.crypto,
     getRandomValues: <T extends ArrayBufferView | null>(array: T): T => {
       if (!array) {
-        throw new Error('crypto
+        throw new Error('crypto.getRandomValues requires a valid array');
+      }
+
+      const typedArray = new Uint8Array(array.buffer);
+      for (let i = 0; i < typedArray.length; i++) {
+        typedArray[i] = Math.floor(Math.random() * 256);
+      }
+
+      return array;
+    }
+  };
+}
+
+console.log("Patched crypto:", global.crypto);
