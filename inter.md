@@ -226,3 +226,237 @@ JS fallback if native feature missing
 CI pipeline checks for compatibility
 
 CodePush gating
+
+
+---
+
+1. React – Preserving scroll position in a list
+
+> You’re working on a screen that shows a list of articles. When the user clicks an article, it opens a detailed view. After they go back, the list scroll position resets to the top, and users find this annoying.
+Task: How would you keep the scroll position when the user comes back, so the list stays exactly where it was?
+
+
+
+✅ Interviewer Notes:
+
+useRef to store scroll offset
+
+Controlled scroll position (window.scrollTo, FlatList.scrollToOffset)
+
+State management between routes
+
+Component unmount behavior
+
+React Navigation screen options (if RN)
+
+
+
+---
+
+2. React – Handling application-wide error states
+
+> Sometimes, your app crashes when unexpected data is returned from the server. You want to make sure the app doesn’t show a blank screen or crash the entire view when this happens.
+Task: How would you make sure users see a helpful message instead of a crash, and what parts of the app should be responsible for handling these situations?
+
+
+
+✅ Interviewer Notes:
+
+ErrorBoundary (class or wrapper)
+
+Fallback UIs
+
+Centralized error logging/reporting (Sentry, etc.)
+
+Graceful error messages
+
+Separation of concerns
+
+
+
+---
+
+3. TypeScript – Creating reusable, typed form fields
+
+> You’re building a form component that should work with many data types — text, number, date, etc. You want to make sure each field only accepts valid props based on its type (e.g., onChange should be type-safe).
+Task: How would you use TypeScript to create a flexible form field component that still keeps all types correct?
+
+
+
+✅ Interviewer Notes:
+
+Generics in components (<T extends FieldType>)
+
+Discriminated unions
+
+Conditional types
+
+IntelliSense-aware props
+
+Avoid any
+
+
+
+---
+
+4. Jest – Choosing what to test and how
+
+> You’re adding tests for a login screen. It has a form, a loading spinner, and shows an error if credentials are wrong. You only have time to write 2–3 tests.
+Task: What would you choose to test first, and why? What would you leave out?
+
+
+
+✅ Interviewer Notes:
+
+Prioritize logic and user-critical paths
+
+Value-driven testing (not 100% coverage)
+
+Good: success + failure flow
+
+May skip: UI layout, button text
+
+Bonus: test as user sees (@testing-library)
+
+
+
+---
+
+5. React Native – Supporting dark mode across the app
+
+> Your app needs to support light and dark themes, and automatically adapt based on the user’s system preferences. Different screens and components use different background colors.
+Task: How would you make sure the whole app follows the correct theme, even when switching modes or reloading screens?
+
+
+
+✅ Interviewer Notes:
+
+Appearance API
+
+useColorScheme()
+
+Theming with Context or react-native-paper
+
+Dynamic styles or tokens
+
+Testing for consistency
+
+
+
+---
+
+6. React Native – Handling app deep linking
+
+> You want to allow users to open your app directly from a shared link like myapp://product/123 or a website link like https://myapp.com/product/123.
+Task: How would you set up the app to open on the right screen, and pass the product ID from the link?
+
+
+
+✅ Interviewer Notes:
+
+Linking module, Linking.addEventListener
+
+Universal links vs deep links
+
+react-navigation linking config
+
+Fallback behavior
+
+Edge cases: app in background, cold start
+
+
+
+---
+
+7. React – Preventing unnecessary API calls
+
+> On a dashboard screen, an API call runs every time the user clicks between tabs — even if they go back to a tab they already visited. The data doesn't change often.
+Task: How would you make sure each API call only runs when truly needed, not every time the user switches tabs?
+
+
+
+✅ Interviewer Notes:
+
+useEffect with dependency array
+
+useMemo or data caching
+
+Tab state persistence
+
+Global state (Redux, Zustand)
+
+Conditional fetches
+
+
+
+---
+
+8. TypeScript – Safely working with third-party libraries
+
+> You’re using a charting library that doesn’t have complete TypeScript types. You want to use it without turning off type checking for the whole file.
+Task: How would you safely work with this library while still keeping good type safety in the rest of your code?
+
+
+
+✅ Interviewer Notes:
+
+declare module
+
+Wrapping types in any selectively
+
+Creating local .d.ts file
+
+Avoiding full @ts-ignore
+
+Possibly using Partial<T>, Record<string, unknown>
+
+
+
+---
+
+9. Jest – Testing navigation behavior
+
+> You have a screen with a button that, when pressed, should take the user to a confirmation screen. You want to write a unit test that verifies this navigation works as expected.
+Task: How would you test whether the navigation happens correctly, without actually rendering the next screen?
+
+
+
+✅ Interviewer Notes:
+
+jest.mock('@react-navigation/native')
+
+Mock useNavigation() or navigation.navigate()
+
+toHaveBeenCalledWith()
+
+Focus on intent, not destination rendering
+
+Isolation testing
+
+
+
+---
+
+10. React Native – Animating screen transitions or components
+
+> You want to add a smooth fade-in effect when a screen appears, and a slide-out effect when it closes. These animations should feel smooth even on older devices.
+Task: How would you add this kind of animation, and what tools or libraries would you consider using?
+
+
+
+✅ Interviewer Notes:
+
+Animated API
+
+react-native-reanimated or LayoutAnimation
+
+useSharedValue, useAnimatedStyle
+
+Performance: native thread offloading
+
+Choosing animation libraries
+
+
+
+---
+
